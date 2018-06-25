@@ -1,8 +1,10 @@
 package com.qa.consulting.accounts.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,5 +36,22 @@ public class AccountRepositoryTest {
 		List<Account> accounts = accountRepository.findAll();
 		assertEquals(3,accounts.size());
 	}
+	
+	 @Test
+	    public void whenFindById_thenReturnAccount() {
+	        Account account = new Account("Tom","Bew", 7676);
+	        entityManager.persistAndFlush(account);
+
+	        Optional<Account> accountfromDb = accountRepository.findById(account.getId());	        
+	        assertThat(accountfromDb.get().getFirstName()).isEqualTo(account.getFirstName());
+	}
+	 
+	 @Test
+	 public void whenInvalidId_thenReturnOptionalNotPresent() {   	
+	 	
+	 	Optional<Account> accountfromDb = accountRepository.findById(-11);
+	 	assertThat(accountfromDb.isPresent()).isFalse();
+	 }
+ 
 
 }
