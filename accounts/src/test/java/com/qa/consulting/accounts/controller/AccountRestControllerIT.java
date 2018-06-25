@@ -74,6 +74,18 @@ public class AccountRestControllerIT {
 	    }
 	    
 
+	    @Test
+	    public void givenInvalidUserId_WhenFindUser_ThenExpect404NotFound() throws Exception {
+	        mvc.perform(get("/account-project/rest/accounts/{id}", 100))
+	                .andExpect(status().isNotFound());	        
+	    }
+	    
+	    @Test
+	    public void givenValidUserId_WhenFindUser_ThenExpect200Successful() throws Exception {
+	        mvc.perform(get("/account-project/rest/accounts/{id}", 3))
+	                .andExpect(status().is2xxSuccessful());	        
+	    }
+
 
 
 

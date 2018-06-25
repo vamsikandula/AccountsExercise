@@ -36,6 +36,15 @@ public class AccountsRestController {
         return accountService.getAllAccounts();
     }
     
+    @GetMapping("/accounts/{id}")
+    public Optional<Account> retriveAccountById(@PathVariable int id) {
+        Optional<Account> accountById = accountService.getAccountById(id);
+        if(!accountById.isPresent())
+        	throw new AccountNotFoundException("Account with id " + id + " not present");        	
+		return accountById;
+    }
+    
+    
     
     @PostMapping("/accounts")
     public ResponseEntity<Object> createAccount(@Valid @RequestBody Account account) {
