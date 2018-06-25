@@ -6,14 +6,17 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,6 +25,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qa.consulting.accounts.controller.AccountsRestController;
 import com.qa.consulting.accounts.model.Account;
 import com.qa.consulting.accounts.service.AccountService;
@@ -51,5 +56,23 @@ public class AccountsRestControllerTest {
 	        verify(service, VerificationModeFactory.times(1)).getAllAccounts();
 	        reset(service);
 	    }
+	    
+	    
+	    @Test
+	    public void whenPostAccount_thenCreateEmployee() throws Exception {
+	    	Account alex = new Account("alex", "abel", 1212);
+	        given(service.save(Mockito.anyObject())).willReturn(alex);
+
+	        mvc.perform(post("/account-project/rest/accounts").contentType(MediaType.APPLICATION_JSON).content(toJson(alex))).andExpect(status().isCreated()).andExpect(jsonPath("$", is("Account has been successfully added")));
+	        verify(service, VerificationModeFactory.times(1)).save(Mockito.anyObject());
+	        reset(service);
+	    }
+	    
+	    private byte[] toJson(Object object) throws IOException {
+	        ObjectMapper mapper = new ObjectMapper();
+	        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+	        return mapper.writeValueAsBytes(object);
+	    }
+
 
 }
