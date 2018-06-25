@@ -28,8 +28,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public Optional<Account> getAccountByFirstName(String firstName) {
-		// TODO Auto-generated method stub
-		return null;
+		return accountRepository.findByFirstName(firstName);
 	}
 
 	@Override
