@@ -38,6 +38,23 @@ public class AccountServiceImplTest {
 	@MockBean
 	private AccountRepository accountRepository; 
 	
+	private final String FIRST_NAME = "Adrian";
+	private final String LAST_NAME = "Cox";
+	private final String NON_FIRST_NAME = "James";
+	
+	@Before
+	public void setup() {
+		Account testAccount = new Account();
+		testAccount.setFirstName(FIRST_NAME);
+		testAccount.setLastName(LAST_NAME);		
+		testAccount.setAccountNumber(1234);		
+		
+		
+		Mockito.<Optional<Account>>when(accountRepository.findById(testAccount.getId())).thenReturn(Optional.of(testAccount)) ;		
+		Mockito.when(accountRepository.findByFirstName(testAccount.getFirstName())).thenReturn(Optional.of(new Account()));
+		
+	}
+	
 	
 	@Test
     public void whenValidId_thenEmployeeShouldBeFound() {
@@ -53,8 +70,30 @@ public class AccountServiceImplTest {
         assertThat(fromDb).isEmpty();
     }
     
+	@Test
+    public void whenValidFirstName_thenAccountShouldExist() {
+		
+        Optional<Account>  doesAccountExist = accountService.getAccountByFirstName(FIRST_NAME);
+        assertThat(doesAccountExist.isPresent()).isEqualTo(true);
+
+        verifyFindByFirstNameIsCalledOnce(FIRST_NAME);
+    }
+
+    @Test
+    public void whenNonExistingName_thenEmployeeShouldNotExist() {
+    	Optional<Account>  doesAccountExist = accountService.getAccountByFirstName(NON_FIRST_NAME);
+        assertThat(doesAccountExist.isPresent()).isEqualTo(false);
+
+        verifyFindByFirstNameIsCalledOnce(NON_FIRST_NAME);
+    }
+
+      
+    private void verifyFindByFirstNameIsCalledOnce(String name) {
+        Mockito.verify(accountRepository, VerificationModeFactory.times(1)).findByFirstName(name);
+        Mockito.reset(accountRepository);
+    }
     
-    
+        
     private void verifyFindByIdIsCalledOnce() {
         Mockito.verify(accountRepository, VerificationModeFactory.times(1)).findById(Mockito.anyInt());
         Mockito.reset(accountRepository);
