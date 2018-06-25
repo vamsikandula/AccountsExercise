@@ -3,8 +3,13 @@ package com.qa.consulting.accounts;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -13,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,6 +73,24 @@ public class AccountsRestControllerTest {
 	        verify(service, VerificationModeFactory.times(1)).save(Mockito.anyObject());
 	        reset(service);
 	    }
+	    
+	    
+	    @Test
+	    public void whenDeleteUserThenReceiveSuccess() throws Exception {
+	    	Account user = new Account("boby" , "smith", 1233);
+	    	
+	        when(service.getAccountById(user.getId())).thenReturn(Optional.of(user));
+	        
+	        doNothing().when(service).deleteAccount(user.getId());
+	        
+	        mvc.perform(
+	                delete("/account-project/rest/accounts/{id}", user.getId()))
+	                .andExpect(status().isOk());
+	        verify(service, times(1)).getAccountById(user.getId());
+	        verify(service, times(1)).deleteAccount(user.getId());
+	        verifyNoMoreInteractions(service);
+	    }	
+	    
 	    
 	    private byte[] toJson(Object object) throws IOException {
 	        ObjectMapper mapper = new ObjectMapper();
