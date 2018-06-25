@@ -17,8 +17,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public List<Account> getAllAccounts() {
-		// TODO Auto-generated method stub
-		return null;
+		return accountRepository.findAll();
 	}
 
 	@Override
@@ -33,13 +32,12 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public Account save(Account account) {
-		// TODO Auto-generated method stub
-		return null;
+		return accountRepository.save(account);
 	}
 
 	@Override
 	public void deleteAccount(int id) {
-		// TODO Auto-generated method stub
+		accountRepository.deleteById(id);
 
 	}
 }
