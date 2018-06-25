@@ -39,4 +39,26 @@ public class AccountServiceImplTest {
 	private AccountRepository accountRepository; 
 	
 	
+	@Test
+    public void whenValidId_thenEmployeeShouldBeFound() {
+        Optional<Account> fromDb = accountService.getAccountById(1);
+        assertThat(fromDb.isPresent());
+        verifyFindByIdIsCalledOnce();
+    }
+
+    @Test
+    public void whenInValidId_thenEmployeeShouldNotBeFound() {
+    	Optional<Account> fromDb = accountService.getAccountById(-99);
+        verifyFindByIdIsCalledOnce();
+        assertThat(fromDb).isEmpty();
+    }
+    
+    
+    
+    private void verifyFindByIdIsCalledOnce() {
+        Mockito.verify(accountRepository, VerificationModeFactory.times(1)).findById(Mockito.anyInt());
+        Mockito.reset(accountRepository);
+    }
+	
+	
 }
