@@ -1,4 +1,4 @@
-package com.qa.consulting.accounts;
+package com.qa.consulting.accounts.controller;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
